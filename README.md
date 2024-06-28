@@ -52,3 +52,47 @@ do
         nmap -Pn --max-retries 0 -p $ARG $HOST
 done
 ```
+Выполним проверку подключения с **centralRouter**:
+```bash
+vagrant@centralRouter:~$ ssh vagrant@192.168.255.1
+ssh: connect to host 192.168.255.1 port 22: Connection timed out
+
+
+vagrant@centralRouter:~$ ./knock 192.168.255.1 8881 7777 9991
+Starting Nmap 7.80 ( https://nmap.org ) at 2024-06-28 10:37 UTC
+Warning: 192.168.255.1 giving up on port because retransmission cap hit (0).
+Nmap scan report for 192.168.255.1
+Host is up.
+
+PORT     STATE    SERVICE
+8881/tcp filtered galaxy4d
+
+Nmap done: 1 IP address (1 host up) scanned in 14.04 seconds
+Starting Nmap 7.80 ( https://nmap.org ) at 2024-06-28 10:37 UTC
+Warning: 192.168.255.1 giving up on port because retransmission cap hit (0).
+Nmap scan report for 192.168.255.1
+Host is up.
+
+PORT     STATE    SERVICE
+7777/tcp filtered cbt
+
+Nmap done: 1 IP address (1 host up) scanned in 13.38 seconds
+Starting Nmap 7.80 ( https://nmap.org ) at 2024-06-28 10:38 UTC
+Warning: 192.168.255.1 giving up on port because retransmission cap hit (0).
+Nmap scan report for 192.168.255.1
+Host is up.
+
+PORT     STATE    SERVICE
+9991/tcp filtered issa
+
+Nmap done: 1 IP address (1 host up) scanned in 13.46 seconds
+
+
+
+vagrant@centralRouter:~$ ssh vagrant@192.168.255.1
+vagrant@192.168.255.1's password:
+Last login: Fri Jun 28 10:11:10 2024 from 192.168.255.2
+```
+Подключение выполнено успешно.
+
+#### Проброс порта
