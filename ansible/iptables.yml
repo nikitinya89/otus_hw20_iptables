@@ -1,0 +1,6 @@
+- name: configure logging
+  hosts: all
+  become: true
+#  gather_facts: no
+  roles:
+    - otus_network

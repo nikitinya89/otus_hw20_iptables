@@ -1,0 +1,74 @@
+---
+# tasks file for otus_network
+- name: disable default route via eth0
+  copy:
+    src: 00-installer-config.yaml
+    dest: /etc/netplan/00-installer-config.yaml
+  when: ansible_hostname != "inetRouter" or ansible_hostname != "inetRouter2"
+
+- name: configure routing
+  copy:
+    src: "50-vagrant-{{ ansible_hostname }}.yaml"
+    dest: /etc/netplan/50-vagrant.yaml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable IP forwarding
+  sysctl:
+    name: net.ipv4.conf.all.forwarding
+    value: '1'
+    sysctl_set: true
+    state: present
+  when: "'routers' in group_names"
+  tags: forwarding
+
+- name: iptables inetRouter
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "iptables_inetRouter_rules.ipv4", dest: "/etc/iptables_rules.ipv4", mode: "0644" }
+    - { src: "iptables", dest: "/etc/network/if-pre-up.d/iptables", mode: "0755" }
+  when: ansible_hostname == "inetRouter"
+
+- name: install nmap
+  apt:
+    name: nmap
+    state: present
+    update_cache: true
+  when: ansible_hostname == "centralRouter"
+
+- name: install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+  when: ansible_hostname == "centralServer"
+
+- name: copy knock script
+  copy:
+    src: knock
+    dest: /home/vagrant/knock
+    owner: vagrant
+    group: vagrant
+    mode: 0755
+  when: ansible_hostname == "centralRouter"
+
+- name: inetRouter2 port forwarding
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "iptables_inetRouter2_rules.ipv4", dest: "/etc/iptables_rules.ipv4", mode: "0644" }
+    - { src: "iptables", dest: "/etc/network/if-pre-up.d/iptables", mode: "0755" }
+  when: ansible_hostname == "inetRouter2"
+
+- name: reboot all servers
+  ansible.builtin.reboot:
