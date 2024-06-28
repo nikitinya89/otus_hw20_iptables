@@ -111,3 +111,9 @@ iptables -t nat -A POSTROUTING -o eth1 -p tcp -d 192.168.0.2 --dport 80 -j SNAT 
 Проверим, что проброс портов работает, обратившись к 8080 порту **inetRouter2** c хоста:  
 
 ![nginx](nginx.jpg)
+
+#### Ansible
+Чтобы выполнить всю настройку с помощью **ansible**, запустим playbook:
+```bash
+ansible-playbook iptables.yml
+```
